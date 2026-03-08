@@ -41,21 +41,18 @@ document.querySelectorAll('.btn').forEach(b => {
     b.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); input[b.id] = false; }, {passive: false});
 });
 
-// 8. Animation Loop
+// In your animate loop:
 function animate() {
     requestAnimationFrame(animate);
-    
+
+    // 1. Move Player
     if(input.up) player.position.z -= 0.2;
-    if(input.down) player.position.z += 0.2;
-    if(input.left) player.position.x -= 0.2;
-    if(input.right) player.position.x += 0.2;
-    
-    // Map Boundaries
-    player.position.x = Math.max(-50, Math.min(50, player.position.x));
-    player.position.z = Math.max(-50, Math.min(50, player.position.z));
-    
-    controls.target.copy(player.position);
+    // ... (other inputs)
+
+    // 2. Smoothly move the camera target toward the player
+    controls.target.lerp(player.position, 0.1); 
     controls.update();
+
     renderer.render(scene, camera);
 }
 animate();
