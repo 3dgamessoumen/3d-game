@@ -1,8 +1,11 @@
 // 1. Scene Setup
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.style.position = "absolute";
+renderer.domElement.style.top = "0";
+renderer.domElement.style.zIndex = "1";
 document.body.appendChild(renderer.domElement);
 
 // 2. Lighting
@@ -33,41 +36,42 @@ scene.add(tree);
 // 6. Camera Controls
 camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
-controls.enableZoom = false;.
+controls.enableZoom = false;
 
-// 7. Simplified Input Logic
+// 7. Input Logic
 const input = { up: false, down: false, left: false, right: false };
-
 const buttons = document.querySelectorAll('.btn');
+
 buttons.forEach(btn => {
-    // Start movement
     btn.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         input[btn.id] = true;
     });
-
-    // Stop movement
     btn.addEventListener('pointerup', (e) => {
         e.preventDefault();
         input[btn.id] = false;
     });
-    
-    // Safety release if finger slides off button
     btn.addEventListener('pointerleave', (e) => {
         input[btn.id] = false;
     });
 });
 
-// In your animate loop:
+// 8. Animation Loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // 1. Move Player
-    if(input.up) player.position.z -= 0.2;
-    // ... (other inputs)
+    // Movement
+    if (input.up) player.position.z -= 0.2;
+    if (input.down) player.position.z += 0.2;
+    if (input.left) player.position.x -= 0.2;
+    if (input.right) player.position.x += 0.2;
 
-    // 2. Smoothly move the camera target toward the player
-    controls.target.lerp(player.position, 0.1); 
+    // Boundaries
+    player.position.x = Math.max(-50, Math.min(50, player.position.x));
+    player.position.z = Math.max(-50, Math.min(50, player.position.z));
+
+    // Smooth Camera Follow
+    controls.target.lerp(player.position, 0.1);
     controls.update();
 
     renderer.render(scene, camera);
