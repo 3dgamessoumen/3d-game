@@ -35,12 +35,32 @@ camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableZoom = false;.
 
-// 7. Inputs
-const input = { up:false, down:false, left:false, right:false };
+// 7. Inputs (Updated for reliable multi-button support)
+const input = { up: false, down: false, left: false, right: false };
+
 document.querySelectorAll('.btn').forEach(b => {
-    b.addEventListener('touchstart', (e) => { e.stopPropagation(); e.preventDefault(); input[b.id] = true; }, {passive: false});
-    b.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); input[b.id] = false; }, {passive: false});
+    // We add listeners for both touch and mouse to ensure compatibility
+    const startEvent = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        input[b.id] = true;
+    };
+    
+    const endEvent = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        input[b.id] = false;
+    };
+
+    b.addEventListener('touchstart', startEvent, {passive: false});
+    b.addEventListener('touchend', endEvent, {passive: false});
+    
+    // Fallback for mouse/click events
+    b.addEventListener('mousedown', startEvent);
+    b.addEventListener('mouseup', endEvent);
+    b.addEventListener('mouseleave', endEvent);
 });
+
 
 // In your animate loop:
 function animate() {
