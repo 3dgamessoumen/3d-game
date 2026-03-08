@@ -1,27 +1,27 @@
-// Scene, Camera, Renderer
+// 1. Scene Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Lighting
+// 2. Lighting
 scene.add(new THREE.DirectionalLight(0xffffff, 1));
 scene.add(new THREE.AmbientLight(0x404040));
 
-// Ground
+// 3. Ground
 const plane = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.MeshStandardMaterial({color: 0x2e7d32}));
 plane.rotation.x = -Math.PI / 2;
 scene.add(plane);
 
-// Character
+// 4. Character
 const player = new THREE.Group();
 const body = new THREE.Mesh(new THREE.BoxGeometry(1, 1.5, 0.5), new THREE.MeshStandardMaterial({color: 0x0000ff}));
 body.position.y = 1;
 player.add(body);
 scene.add(player);
 
-// Tree Obstacle
+// 5. Obstacle (Tree)
 const tree = new THREE.Group();
 tree.add(new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1), new THREE.MeshStandardMaterial({color: 0x5D4037})));
 const leaves = new THREE.Mesh(new THREE.ConeGeometry(1, 2, 8), new THREE.MeshStandardMaterial({color: 0x2E7D32}));
@@ -30,28 +30,27 @@ tree.add(leaves);
 tree.position.set(10, 0.5, 10);
 scene.add(tree);
 
-// Controls
+// 6. Camera Controls
 camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Inputs
+// 7. Inputs
 const input = { up:false, down:false, left:false, right:false };
 document.querySelectorAll('.btn').forEach(b => {
     b.addEventListener('touchstart', (e) => { e.stopPropagation(); e.preventDefault(); input[b.id] = true; }, {passive: false});
     b.addEventListener('touchend', (e) => { e.stopPropagation(); e.preventDefault(); input[b.id] = false; }, {passive: false});
 });
 
-// Animation
+// 8. Animation Loop
 function animate() {
     requestAnimationFrame(animate);
     
-    // Movement with boundaries
     if(input.up) player.position.z -= 0.2;
     if(input.down) player.position.z += 0.2;
     if(input.left) player.position.x -= 0.2;
     if(input.right) player.position.x += 0.2;
     
-    // Keep within map boundaries (-50 to 50)
+    // Map Boundaries
     player.position.x = Math.max(-50, Math.min(50, player.position.x));
     player.position.z = Math.max(-50, Math.min(50, player.position.z));
     
@@ -60,4 +59,3 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
-
