@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D World</title>
+    <title>3D World Explorer</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; touch-action: none; }
+        canvas { display: block; }
         #controls { position: absolute; bottom: 30px; left: 20px; z-index: 100; display: grid; grid-template-columns: 70px 70px 70px; gap: 10px; }
         .btn { width: 70px; height: 70px; background: rgba(255,255,255,0.3); border: 2px solid white; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; touch-action: none; }
     </style>
@@ -17,8 +18,10 @@
         <div class="btn" id="right">→</div>
         <div class="btn" id="down" style="grid-column: 2;">↓</div>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
     <script src="game.js"></script>
 </body>
 </html>
