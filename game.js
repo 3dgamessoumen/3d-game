@@ -33,6 +33,7 @@ scene.add(tree);
 // 6. Camera Controls
 camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableZoom = false;.
 
 // 7. Inputs
 const input = { up:false, down:false, left:false, right:false };
