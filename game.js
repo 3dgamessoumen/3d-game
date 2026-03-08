@@ -35,32 +35,28 @@ camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableZoom = false;.
 
-// 7. Inputs (Updated for reliable multi-button support)
+// 7. Simplified Input Logic
 const input = { up: false, down: false, left: false, right: false };
 
-document.querySelectorAll('.btn').forEach(b => {
-    // We add listeners for both touch and mouse to ensure compatibility
-    const startEvent = (e) => {
-        e.stopPropagation();
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(btn => {
+    // Start movement
+    btn.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        input[b.id] = true;
-    };
-    
-    const endEvent = (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        input[b.id] = false;
-    };
+        input[btn.id] = true;
+    });
 
-    b.addEventListener('touchstart', startEvent, {passive: false});
-    b.addEventListener('touchend', endEvent, {passive: false});
+    // Stop movement
+    btn.addEventListener('pointerup', (e) => {
+        e.preventDefault();
+        input[btn.id] = false;
+    });
     
-    // Fallback for mouse/click events
-    b.addEventListener('mousedown', startEvent);
-    b.addEventListener('mouseup', endEvent);
-    b.addEventListener('mouseleave', endEvent);
+    // Safety release if finger slides off button
+    btn.addEventListener('pointerleave', (e) => {
+        input[btn.id] = false;
+    });
 });
-
 
 // In your animate loop:
 function animate() {
