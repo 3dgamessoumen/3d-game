@@ -56,44 +56,39 @@ buttons.forEach(btn => {
     });
 });
 
-/// ... [previous setup code above] ...
-
 // 8. Animation Loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- STEP 1: MOVEMENT ---
+    // --- Movement Logic ---
     if (input.up) player.position.z -= 0.2;
     if (input.down) player.position.z += 0.2;
     if (input.left) player.position.x -= 0.2;
     if (input.right) player.position.x += 0.2;
 
-    // --- STEP 2: BOUNDARIES ---
+    // --- Boundaries ---
     player.position.x = Math.max(-50, Math.min(50, player.position.x));
     player.position.z = Math.max(-50, Math.min(50, player.position.z));
 
-    // --- STEP 3: THE FIX (CAMERA FOLLOW) ---
-    // This makes the OrbitControls focus point follow the player
+    // --- CAMERA FOLLOW (The Fix) ---
+    // 1. Move the camera so it stays at the same distance (0 left/right, 10 up, 15 back)
+    camera.position.x = player.position.x;
+    camera.position.y = player.position.y + 10;
+    camera.position.z = player.position.z + 15;
+
+    // 2. Tell the controls to look exactly at the player
     controls.target.copy(player.position);
     
-    // This moves the camera itself so it stays 15 units behind and 10 units up
-    camera.position.set(
-        player.position.x, 
-        player.position.y + 10, 
-        player.position.z + 15
-    );
-    // Essential: Update controls to apply the changes
-    controls.update();
-
-    // --- STEP 4: RENDER ---
-    renderer.render(scene, camera);
-}
-animate();
-
-    // Smooth Camera Follow
-    controls.target.lerp(player.position, 0.1);
+    // 3. Update controls so the changes actually happen
     controls.update();
 
     renderer.render(scene, camera);
 }
 animate();
+
+// 9. Resize Logic (Bonus: keeps game looking right when you rotate phone)
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
