@@ -37,6 +37,7 @@ scene.add(tree);
 camera.position.set(0, 10, 15);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableZoom = false;
+controls.enablePan = false; // Disable panning so it doesn't break follow logic
 
 // 7. Input Logic
 const input = { up: false, down: false, left: false, right: false };
@@ -60,26 +61,28 @@ buttons.forEach(btn => {
 function animate() {
     requestAnimationFrame(animate);
 
-    // --- Movement Logic ---
+    // Movement
     if (input.up) player.position.z -= 0.2;
     if (input.down) player.position.z += 0.2;
     if (input.left) player.position.x -= 0.2;
     if (input.right) player.position.x += 0.2;
 
-    // --- Boundaries ---
+    // Boundaries
     player.position.x = Math.max(-50, Math.min(50, player.position.x));
     player.position.z = Math.max(-50, Math.min(50, player.position.z));
 
-    // --- CAMERA FOLLOW (The Fix) ---
-    // 1. Move the camera so it stays at the same distance (0 left/right, 10 up, 15 back)
-    camera.position.x = player.position.x;
-    camera.position.y = player.position.y + 10;
-    camera.position.z = player.position.z + 15;
-
-    // 2. Tell the controls to look exactly at the player
+    // CAMERA FOLLOW FIX
+    // We update the controls target first
     controls.target.copy(player.position);
     
-    // 3. Update controls so the changes actually happen
+    // Then we manually offset the camera position relative to the player
+    camera.position.set(
+        player.position.x, 
+        player.position.y + 10, 
+        player.position.z + 15
+    );
+
+    // Update the controls math
     controls.update();
 
     renderer.render(scene, camera);
