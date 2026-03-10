@@ -56,19 +56,39 @@ buttons.forEach(btn => {
     });
 });
 
+/// ... [previous setup code above] ...
+
 // 8. Animation Loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // Movement
+    // --- STEP 1: MOVEMENT ---
     if (input.up) player.position.z -= 0.2;
     if (input.down) player.position.z += 0.2;
     if (input.left) player.position.x -= 0.2;
     if (input.right) player.position.x += 0.2;
 
-    // Boundaries
+    // --- STEP 2: BOUNDARIES ---
     player.position.x = Math.max(-50, Math.min(50, player.position.x));
     player.position.z = Math.max(-50, Math.min(50, player.position.z));
+
+    // --- STEP 3: THE FIX (CAMERA FOLLOW) ---
+    // This makes the OrbitControls focus point follow the player
+    controls.target.copy(player.position);
+    
+    // This moves the camera itself so it stays 15 units behind and 10 units up
+    camera.position.set(
+        player.position.x, 
+        player.position.y + 10, 
+        player.position.z + 15
+    );
+    // Essential: Update controls to apply the changes
+    controls.update();
+
+    // --- STEP 4: RENDER ---
+    renderer.render(scene, camera);
+}
+animate();
 
     // Smooth Camera Follow
     controls.target.lerp(player.position, 0.1);
