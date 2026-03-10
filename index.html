@@ -7,16 +7,53 @@
     <style>
         body { margin: 0; overflow: hidden; background: #000; touch-action: none; }
         canvas { display: block; }
-        #controls { position: absolute; bottom: 30px; left: 20px; z-index: 100; display: grid; grid-template-columns: 70px 70px 70px; gap: 10px; }
-        .btn { width: 70px; height: 70px; background: rgba(255,255,255,0.3); border: 2px solid white; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; touch-action: none; }
+
+        /* 1. LEFT SIDE: Movement Buttons */
+        #controls { 
+            position: absolute; 
+            bottom: 30px; 
+            left: 20px; 
+            z-index: 100; 
+            display: grid; 
+            grid-template-columns: 70px 70px 70px; 
+            gap: 10px; 
+        }
+        .btn { 
+            width: 70px; 
+            height: 70px; 
+            background: rgba(255,255,255,0.3); 
+            border: 2px solid white; 
+            border-radius: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            color: white; 
+            font-size: 24px; 
+            touch-action: none; 
+            user-select: none;
+        }
+        .btn:active { background: rgba(255,255,255,0.6); }
+
+        /* 2. RIGHT SIDE: Rotation Touch Area */
+        #touch-area {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%; /* Only the right half of the screen */
+            height: 100%;
+            z-index: 50; /* Above the game, but doesn't block buttons */
+            touch-action: none;
+        }
     </style>
 </head>
 <body>
+    <div id="touch-area"></div>
+
     <div id="controls">
-        <div class="btn" id="up">↑</div>
-        <div class="btn" id="left">←</div>
-        <div class="btn" id="right">→</div>
-        <div class="btn" id="down" style="grid-column: 2;">↓</div>
+        <div class="btn" id="up" style="grid-column: 2;">↑</div>
+        <div class="btn" id="left" style="grid-row: 2; grid-column: 1;">←</div>
+        <div class="btn" id="right" style="grid-row: 2; grid-column: 3;">→</div>
+        <div class="btn" id="down" style="grid-row: 3; grid-column: 2;">↓</div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
