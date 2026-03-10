@@ -32,12 +32,16 @@ leaves.position.y = 1.5;
 tree.add(leaves);
 tree.position.set(10, 0.5, 10);
 scene.add(tree);
-
 // 6. Camera Controls
-camera.position.set(0, 10, 15);
-const controls = new THREE.OrbitControls(camera, renderer.domElement);
+const touchZone = document.getElementById('touch-area');
+
+// Change this line! We pass touchZone instead of renderer.domElement
+const controls = new THREE.OrbitControls(camera, touchZone); 
+
 controls.enableZoom = false;
-controls.enablePan = false; // Disable panning so it doesn't break follow logic
+controls.enablePan = false;
+controls.enableDamping = true; // Makes rotation feel smooth
+controls.rotateSpeed = 0.8;
 
 // 7. Input Logic
 const input = { up: false, down: false, left: false, right: false };
@@ -61,28 +65,22 @@ buttons.forEach(btn => {
 function animate() {
     requestAnimationFrame(animate);
 
-    // Movement
-    if (input.up) player.position.z -= 0.2;
-    if (input.down) player.position.z += 0.2;
-    if (input.left) player.position.x -= 0.2;
-    if (input.right) player.position.x += 0.2;
+    // Get the current camera rotation
+    const angle = controls.getAzimuthalAngle();
 
-    // Boundaries
-    player.position.x = Math.max(-50, Math.min(50, player.position.x));
-    player.position.z = Math.max(-50, Math.min(50, player.position.z));
+    // Move relative to where the camera is looking
+    if (input.up) {
+        player.position.x -= Math.sin(angle) * 0.2;
+        player.position.z -= Math.cos(angle) * 0.2;
+    }
+    if (input.down) {
+        player.position.x += Math.sin(angle) * 0.2;
+        player.position.z += Math.cos(angle) * 0.2;
+    }
+    // ... repeat logic for left/right ...
 
-    // CAMERA FOLLOW FIX
-    // We update the controls target first
+    // Camera stays locked on the player
     controls.target.copy(player.position);
-    
-    // Then we manually offset the camera position relative to the player
-    camera.position.set(
-        player.position.x, 
-        player.position.y + 10, 
-        player.position.z + 15
-    );
-
-    // Update the controls math
     controls.update();
 
     renderer.render(scene, camera);
